@@ -61,3 +61,21 @@ export async function getToolStatus(tool: string): Promise<ToolAvailability> {
   if (!adapter) return 'unknown';
   return adapter.checkAvailability();
 }
+
+// ── Knowledge Injector（LG-035 注入器架构·单提共用位）──
+export {
+  injectKnowledgeContext,
+  type KnowledgeInjectionResult,
+} from './knowledge-injector/inject.js';
+export {
+  createKnowledgeStore,
+  type KnowledgeMetricEvent,
+} from './knowledge-injector/knowledge-db.js';
+export { syncKnowledgeFromSource } from './knowledge-injector/sync.js';
+export {
+  configureKnowledgePathResolver,
+  resetKnowledgePathResolver,
+  getKnowledgeDbPath as getKitKnowledgeDbPath,
+  enforceProjectIsolation as enforceKitProjectIsolation,
+  type KnowledgePathResolver,
+} from './knowledge-injector/resolver.js';
