@@ -35,10 +35,16 @@ function fallbackKnowledgeDbPath(projectRoot?: string): string {
 
 function fallbackEnforceProjectIsolation(projectRoot: string | undefined, dbPath: string): void {
   if (!projectRoot) return;
-  const root = resolve(projectRoot);
-  const db = resolve(dbPath);
-  if (!db.startsWith(root + '\\') && !db.startsWith(root + '/')) {
-    throw new Error(`project isolation violation: ${db} is outside project root ${root}`);
+  // 文案/判定对齐真源 router enforceProjectIsolation（伴生测试断言 Cross-project 文案）
+  const normalizedRoot = resolve(projectRoot);
+  const normalizedDb = resolve(dbPath);
+  const expectedCognition = join(normalizedRoot, '.tricompany-cognition');
+  if (!normalizedDb.startsWith(expectedCognition)) {
+    throw new Error(
+      `Cross-project access denied: project "${normalizedRoot}" attempted to access ` +
+      `"${normalizedDb}" which is outside its cognition directory ` +
+      `"${expectedCognition}". Each project must use its own isolated store.`,
+    );
   }
 }
 

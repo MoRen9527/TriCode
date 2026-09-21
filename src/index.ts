@@ -64,14 +64,33 @@ export async function getToolStatus(tool: string): Promise<ToolAvailability> {
 
 // ── Knowledge Injector（LG-035 注入器架构·单提共用位）──
 export {
+  knowledgeContextTag,
+  buildKnowledgeContextBlock,
   injectKnowledgeContext,
   type KnowledgeInjectionResult,
 } from './knowledge-injector/inject.js';
 export {
   createKnowledgeStore,
+  KNOWLEDGE_LAYERS,
+  layerDomain,
+  type KnowledgeLayer,
+  type KnowledgeLayerDomain,
+  type KnowledgeNamespace,
   type KnowledgeMetricEvent,
 } from './knowledge-injector/knowledge-db.js';
-export { syncKnowledgeFromSource } from './knowledge-injector/sync.js';
+export {
+  KNOWLEDGE_LAYER_FILE_SUFFIXES,
+  CONTENT_SUPPORT_ROOT_NAME,
+  resolveContentRoot,
+  INBOX_RECORD_FIELDS,
+  INBOX_CLOSED_WINDOW_DAYS,
+  parseInboxRecord,
+  shouldInjectInboxRecord,
+  serializeInboxContent,
+  syncKnowledgeFromSource,
+  type InboxRecord,
+  type KnowledgeSyncReport,
+} from './knowledge-injector/sync.js';
 export {
   recordKnowledgeMetric,
   getKnowledgeMetricSnapshot,
@@ -82,6 +101,8 @@ export {
 export {
   configureKnowledgePathResolver,
   resetKnowledgePathResolver,
+  getKnowledgeDbPath,
+  enforceProjectIsolation,
   getKnowledgeDbPath as getKitKnowledgeDbPath,
   enforceProjectIsolation as enforceKitProjectIsolation,
   type KnowledgePathResolver,
