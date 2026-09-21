@@ -73,6 +73,13 @@ export {
 } from './knowledge-injector/knowledge-db.js';
 export { syncKnowledgeFromSource } from './knowledge-injector/sync.js';
 export {
+  recordKnowledgeMetric,
+  getKnowledgeMetricSnapshot,
+  isEscalationBlockReason,
+  type KnowledgeMetricInput,
+  type KnowledgeMetricSnapshot,
+} from './knowledge-injector/metrics.js';
+export {
   configureKnowledgePathResolver,
   resetKnowledgePathResolver,
   getKnowledgeDbPath as getKitKnowledgeDbPath,
