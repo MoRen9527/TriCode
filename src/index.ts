@@ -108,4 +108,31 @@ export {
   type KnowledgePathResolver,
 } from './knowledge-injector/resolver.js';
 export { collectOrgLayerSummary, type OrgLayerSummary } from './knowledge-injector/org-layer.js';
+export {
+  loadDigestRules,
+  validateDigestRules,
+  matchDigestRule,
+  isSafeTargetPage,
+  DigestRulesError,
+  type DigestRules,
+  type DigestRule,
+  type DigestRuleMatch,
+  type DigestRuleInput,
+  type DigestAction,
+  type DigestDepth,
+} from './knowledge-injector/digest-rules.js';
+export {
+  classifyDigest,
+  NO_MATCH_ESCALATE_TO,
+  NO_MATCH_REASON,
+  type DigestVerdict,
+} from './knowledge-injector/digest-classify.js';
+export {
+  executeDigest,
+  resolveTargetPage,
+  renderShallowPage,
+  type DigestDocumentInput,
+  type DigestOutcome,
+  type ExecuteDigestOptions,
+} from './knowledge-injector/digest-executor.js';
 
