@@ -107,3 +107,5 @@ export {
   enforceProjectIsolation as enforceKitProjectIsolation,
   type KnowledgePathResolver,
 } from './knowledge-injector/resolver.js';
+export { collectOrgLayerSummary, type OrgLayerSummary } from './knowledge-injector/org-layer.js';
+
