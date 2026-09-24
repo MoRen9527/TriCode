@@ -30,6 +30,8 @@ export interface DigestDocumentInput {
 export type DigestOutcome =
   | { status: 'digested'; pagePath: string; page: string; contentHash: string }
   | { status: 'deep-pending'; queuePath: string; contentHash: string; reason: string }
+  // reject 日志持久化=digest_log 件职责（设计 §7②「丢弃有日志」；一期仅结构化
+  // outcome，digest_log 随二期排期显式带上——STE 防语义悬空注记 2026-09-24）。
   | { status: 'rejected'; contentHash: string; reason: string }
   | { status: 'escalated'; contentHash: string; escalateTo: string; reason?: string }
   | { status: 'error'; contentHash: string; reason: string };
@@ -153,7 +155,8 @@ function dispatchDeepPending(doc: DigestDocumentInput, verdict: DigestVerdict, o
 
 /**
  * 消化执行入口：按阀门判定分发（digest→shallow 页落盘/deep→队列分流；
- * reject/escalate→结构化 outcome 交调用方审计，本件不落盘）。
+ * reject/escalate→结构化 outcome 交调用方审计，本件不落盘——reject 日志面
+ * =digest_log 二期件，设计 §7② 依赖显式化）。
  * 全路径零 LLM；error outcome 绝不静默丢（调用方审计面处置）。
  */
 export function executeDigest(doc: DigestDocumentInput, verdict: DigestVerdict, opts: ExecuteDigestOptions): DigestOutcome {

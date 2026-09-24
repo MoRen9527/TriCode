@@ -23,7 +23,7 @@ import {
   validateDigestRules,
 } from '../src/knowledge-injector/digest-rules.js';
 import { classifyDigest } from '../src/knowledge-injector/digest-classify.js';
-import { executeDigest } from '../src/knowledge-injector/digest-executor.js';
+import { executeDigest, renderShallowPage } from '../src/knowledge-injector/digest-executor.js';
 
 // 设计 §3 示例基线（顺序勘正：content_empty reject 置首——声明序首匹配语义下
 // 置尾会被 source_kind 规则遮蔽；勘正观察项随读数件报 CTO）+ deep 分流一条。
@@ -321,4 +321,48 @@ test('端到端：磁盘 yaml → 加载 → 分类 → 执行 → 落盘（四�
   const queueLines = readFileSync(join(outDir, 'deep-pending.jsonl'), 'utf8').trim().split('\n');
   assert.equal(queueLines.length, 1);
   assert.equal((JSON.parse(queueLines[0]) as { contentHash: string }).contentHash, r4.d.contentHash);
+});
+
+// ── 5. 一期验收候项补测（STE 门 gap g1-g3，2026-09-24 排窗随手补）──
+
+test('补测 g1：{source_kind} 占位 executor 层展开落盘', () => {
+  const outDir = makeTempDir();
+  const d = doc({ sourceKind: 'daily-note' });
+  const verdict = { action: 'digest' as const, ruleIndex: 0, targetPage: '日志/{source_kind}/{date}.md', depth: 'shallow' as const };
+  const o = executeDigest(d, verdict, { outDir, now: NOW });
+  assert.equal(o.status, 'digested');
+  if (o.status !== 'digested') return;
+  assert.equal(o.pagePath, join(outDir, '日志', 'daily-note', `${NOW_DATE}.md`));
+  assert.ok(readFileSync(o.pagePath, 'utf8').includes('source_kind: daily-note'));
+});
+
+test('补测 g2：pageTitle 边界——>80 取「（无题）」/恰好 80 取首行', () => {
+  const over = renderShallowPage(doc({ content: '长'.repeat(81) }), 'shallow', NOW);
+  assert.ok(over.includes('# （无题）'), '>80 字符首行应弃用');
+  const edge = renderShallowPage(doc({ content: '短'.repeat(80) }), 'shallow', NOW);
+  assert.ok(edge.includes(`# ${'短'.repeat(80)}`), '恰好 80 应取首行');
+});
+
+test('补测 g3：写盘故障注入 → error outcome（真 I/O 故障非 mock）', () => {
+  const workDir = makeTempDir();
+  const notADir = join(workDir, 'not-a-dir');
+  writeFileSync(notADir, 'x', 'utf8'); // outDir 位置预置为常规文件 → 后续 mkdir 必败
+
+  const shallow = executeDigest(
+    doc(),
+    { action: 'digest', ruleIndex: 0, targetPage: '页/{date}.md', depth: 'shallow' },
+    { outDir: notADir, now: NOW },
+  );
+  assert.equal(shallow.status, 'error');
+  if (shallow.status !== 'error') return;
+  assert.ok(shallow.reason.includes('写盘失败'), `实得 reason: ${shallow.reason}`);
+
+  const deep = executeDigest(
+    doc({ sourceKind: 'research-note' }),
+    { action: 'digest', ruleIndex: 1, targetPage: 'x.md', depth: 'deep' },
+    { outDir: notADir, now: NOW },
+  );
+  assert.equal(deep.status, 'error');
+  if (deep.status !== 'error') return;
+  assert.ok(deep.reason.includes('deep 队列写盘失败'), `实得 reason: ${deep.reason}`);
 });
