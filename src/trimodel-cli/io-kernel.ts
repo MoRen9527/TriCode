@@ -271,7 +271,8 @@ export function rollbackTo(plan: RollbackPlan, io: CoreIO): WriteOutcome {
     return { ok: false, code: 'INVALID_INPUT', message: '备份路径越界，已拒绝', data: {} };
   }
   if (!existsSync(backupPath)) {
-    return { ok: false, code: 'INVALID_INPUT', message: `备份不存在或已被轮换清理（${backupFile}）。可先查看备份清单另选条目。`, data: {} };
+    // not_found 判别位（HTTP 壳映射 404 用；core 保持零 HTTP 语义）
+    return { ok: false, code: 'INVALID_INPUT', message: `备份不存在或已被轮换清理（${backupFile}）。可先查看备份清单另选条目。`, data: { not_found: true } };
   }
   // 门④ 同款：回滚前先读目标备份确认 JSON 合法（不把坏备份拷成现役）
   const probe = readSettings(backupPath);
