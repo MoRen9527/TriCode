@@ -178,6 +178,21 @@ test('statusCommand：L2 标记态在位时如实报 present+content', async () 
   assert.equal(data.l2_flag.content, 'degraded-at-2026-09-26');
 });
 
+test('statusCommand：L2 标记注入但文件不在 → present:false（正常态两态之一）', async () => {
+  const { io, root } = readyIO();
+  const io2: CoreIO = { ...io, l2FlagPath: join(root, 'absent-flag') };
+  const out = await statusCommand({}, io2);
+  const data = out.data as Record<string, any>;
+  assert.equal(data.l2_flag.present, false);
+});
+
+test('statusCommand：l2FlagPath 未注入 → 无 l2_flag 段（诚实未接线态）', async () => {
+  const { io } = readyIO();
+  const out = await statusCommand({}, io);
+  const data = out.data as Record<string, any>;
+  assert.equal('l2_flag' in data, false);
+});
+
 // ── runCli 派发器 ──
 
 function capture(): { lines: string[]; write: (s: string) => void } {

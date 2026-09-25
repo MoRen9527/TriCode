@@ -11,6 +11,9 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 export const SETTINGS_FILE_ENV = 'TRIMODEL_CLAUDE_SETTINGS';
 export const DEPLOY_KEY_ENV = 'TRIMODEL_DEPLOY_KEY';
 export const AUDIT_LOG_ENV = 'TRIMODEL_AUDIT_LOG';
+/** L2 恢复梯标记文件（status 读数源；未设=不读=CLI status 无 l2 段——core 零硬编码路径，
+ * 路径真源=调度环境注入，波④前置小笔① 2026-09-26 CTO 批接）。 */
+export const L2_FLAG_ENV = 'TRIMODEL_L2_FLAG';
 /** CTO 裁③（施工批复①同族）：默认 provider 单键全局，四族同读；缺省常量 bigmodel。 */
 export const DEFAULT_PROVIDER_ENV = 'TRIMODEL_CLI_DEFAULT_PROVIDER';
 
@@ -67,6 +70,12 @@ export function defaultAuditLogPath(): string {
   const env = process.env[AUDIT_LOG_ENV]?.trim();
   if (env) return env;
   return join(process.cwd(), 'config-audit.log');
+}
+
+/** L2 标记文件路径缺省解析（env 未设=undefined=status 无 l2 段，诚实未接线态）。 */
+export function defaultL2FlagPath(): string | undefined {
+  const env = process.env[L2_FLAG_ENV]?.trim();
+  return env || undefined;
 }
 
 /** presets 唯一真源目录（core 包内自洽：src 或 dist 同构 ../../presets；CTO 裁③ 引用形态）。 */

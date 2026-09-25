@@ -20,8 +20,8 @@ export {
 } from './pure.js';
 // L-C 环境+CoreIO
 export {
-  AUDIT_LOG_ENV, DEFAULT_PROVIDER, DEFAULT_PROVIDER_ENV, DEPLOY_KEY_ENV, SETTINGS_FILE_ENV,
-  appendAudit, defaultAuditLogPath, defaultDeployKeyPath, defaultPresetsDir, defaultSettingsPath,
+  AUDIT_LOG_ENV, DEFAULT_PROVIDER, DEFAULT_PROVIDER_ENV, DEPLOY_KEY_ENV, L2_FLAG_ENV, SETTINGS_FILE_ENV,
+  appendAudit, defaultAuditLogPath, defaultDeployKeyPath, defaultL2FlagPath, defaultPresetsDir, defaultSettingsPath,
   makeCoreIO, resolveDefaultProvider,
   type CoreIO, type DeployKeyResolution, type ProbeReading,
 } from './env.js';
