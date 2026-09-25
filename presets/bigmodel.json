@@ -1,0 +1,8 @@
+{
+  "id": "bigmodel",
+  "label": "bigmodel 直连（glm）",
+  "base_url": "https://open.bigmodel.cn/api/anthropic",
+  "model": "glm-5.3-flash",
+  "key_placeholder": "在 bigmodel 控制台生成的 API Key",
+  "deployed": true
+}

@@ -1,0 +1,8 @@
+{
+  "id": "deepseek",
+  "label": "deepseek 直连（候批模板）",
+  "base_url": "https://api.deepseek.com/anthropic",
+  "model": "deepseek-flash",
+  "key_placeholder": "deepseek 平台 API Key",
+  "deployed": false
+}

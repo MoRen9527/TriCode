@@ -1,8 +1,8 @@
 {
   "name": "@trimetaverse/tricode",
-  "version": "0.1.0",
+  "version": "0.2.0-wave3",
   "private": true,
-  "description": "TriMetaverse Code Tool Glue — unified code execution interface across opencode / Claude Code / Codex / zcode / Copilot",
+  "description": "TriMetaverse Code Tool Glue — unified code execution interface across opencode / Claude Code / Codex / zcode / Copilot（0.2.0-wave3：+trimodel-cli core，TASK-TRIMODEL-RECOVERY-LADDER-01 波③）",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,6 +11,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./trimodel-cli": {
+      "import": "./dist/trimodel-cli/index.js",
+      "require": "./dist/trimodel-cli/index.js",
+      "types": "./dist/trimodel-cli/index.d.ts"
     }
   },
   "engines": {
