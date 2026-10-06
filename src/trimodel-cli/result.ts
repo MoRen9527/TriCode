@@ -5,7 +5,7 @@
 /** core 版本（CTO 施工序批复①：版本锁定纪律——core 改动 bump 此值+package.json version，
  * 四仓 file: 依赖同步重装，验收门③ 随正名对照表呈版本一致性读数。与 TriCode package.json
  * version 保持同字面值。 */
-export const CORE_VERSION = '0.2.0-wave3';
+export const CORE_VERSION = '0.2.1-wave3';
 
 /** 结果码族（结构化 RESULT 行判别符；HTTP 壳按此映射现役 statusCode，壳语义不动）。 */
 export type ResultCode =

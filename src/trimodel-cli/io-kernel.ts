@@ -40,6 +40,15 @@ export function readSettings(path: string): { raw: string; doc: SettingsDoc } | 
 
 // ── 门① 备份轮换 ──
 
+let backupSeq = 0;
+/** 唯一备份名 bak-<ts>-<pid>-<seq>：同毫秒连写/跨进程并发不再同名互覆静默丢回滚锚
+ * （LG-054 族③定案=唯一性后缀单 helper，CORE_VERSION 门 0.2.1-wave3 内落地）。 */
+function uniqueBackupPath(path: string): string {
+  backupSeq += 1;
+  const ts = new Date().toISOString().replace(/[:.]/g, '-');
+  return `${path}.bak-${ts}-${process.pid}-${backupSeq}`;
+}
+
 /** 备份轮换：保留近 BACKUP_KEEP 份（mtime 降序），FROZEN-BACKUPS 哨兵豁免（防回滚锚被轮换自毁）。 */
 export function rotateBackups(path: string): { rotated: boolean; removed: number } {
   const sentinel = join(dirname(path), 'FROZEN-BACKUPS');
@@ -151,11 +160,10 @@ export function runWrite(plan: WritePlan, io: CoreIO): WriteOutcome {
     };
   }
 
-  // 门① 备份先行（存在才备份）——回滚锚
-  const ts = new Date().toISOString().replace(/[:.]/g, '-');
+  // 门① 备份先行（存在才备份）——回滚锚（唯一性后缀防同毫秒/并发同名互覆）
   let backupPath: string | null = null;
   if (fileExisted) {
-    backupPath = `${path}.bak-${ts}`;
+    backupPath = uniqueBackupPath(path);
     try {
       copyFileSync(path, backupPath);
     } catch (err) {
@@ -283,7 +291,7 @@ export function rollbackTo(plan: RollbackPlan, io: CoreIO): WriteOutcome {
   // 回滚也是写：先把当前态备份（回滚可逆），再拷入目标备份
   let preRollbackBackup: string | null = null;
   if (existsSync(path)) {
-    preRollbackBackup = `${path}.bak-${new Date().toISOString().replace(/[:.]/g, '-')}`;
+    preRollbackBackup = uniqueBackupPath(path);
     try { copyFileSync(path, preRollbackBackup); } catch (err) {
       appendAudit(io.auditLogPath, { who, mode: 'rollback', backup: backupFile, assert: 'n/a', result: 'error', detail: 'pre-backup-failed' });
       return { ok: false, code: 'WRITE_FAILED', message: `回滚前备份当前配置失败，已中止回滚：${err instanceof Error ? err.message : String(err)}`, data: {} };
